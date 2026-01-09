@@ -4,6 +4,9 @@ import { ThemeToggle, AuthProvider, useAuth } from './components/Shared';
 import { LandingPage, ServicesPage, ConnectPage, InsightsPage, PlanningPage, MarketsPage, AnalysisPage, PolicyPage, TechPage, PortfoliosPage } from './pages/PublicPages';
 import { RetirementPage, ToolsPage, AccountsPage, ReportsPage, DocumentsPage, ConsultationPage, SettingsPage, InvestmentPortfolioPage } from './pages/AppPages';
 import { AdminDashboard, AdminUsersPage, AdminContentPage, AdminTransactionsPage, AdminSettingsPage, AdminDocumentsPage, AdminClientDataPage } from './pages/AdminPages';
+import { RetirementPlanningPage } from './pages/RetirementPlanningPage';
+import { EducationPlanningPage } from './pages/EducationPlanningPage';
+import { BookingPage } from './pages/BookingPage';
 
 const RequireAuth: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, isLoading } = useAuth();
@@ -27,6 +30,9 @@ const AppRoutes: React.FC = () => {
       <Route path="/connect" element={<ConnectPage />} />
       <Route path="/insights" element={<InsightsPage />} />
       <Route path="/planning" element={<PlanningPage />} />
+      <Route path="/planning/retirement" element={<RetirementPlanningPage />} />
+      <Route path="/planning/education" element={<EducationPlanningPage />} />
+      <Route path="/booking" element={<BookingPage />} />
       
       {/* New Insight Routes */}
       <Route path="/markets" element={<MarketsPage />} />

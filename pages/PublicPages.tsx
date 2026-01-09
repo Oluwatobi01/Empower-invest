@@ -510,7 +510,35 @@ export const InsightsPage: React.FC = () => {
     );
 };
 
-export const PlanningPage: React.FC = () => { return <InsightsPage />; };
+export const PlanningPage: React.FC = () => {
+    return (
+        <div className="min-h-screen bg-white dark:bg-slate-900 text-slate-900 dark:text-white">
+             <header className="sticky top-0 z-50 bg-white/90 dark:bg-[#101922]/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 p-4">
+                 <div className="max-w-7xl mx-auto flex items-center justify-between">
+                     <Link to="/" className="flex items-center gap-2 font-bold text-xl">
+                        <span className="material-symbols-outlined text-primary">arrow_back</span> Back
+                     </Link>
+                 </div>
+             </header>
+             <main className="max-w-7xl mx-auto p-8">
+                 <h1 className="text-4xl font-bold mb-4">Financial Planning</h1>
+                 <p className="text-lg text-slate-600 dark:text-slate-400">Tools and resources to help you plan for your financial future.</p>
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+                    <Link to="/planning/retirement" className="p-6 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-shadow">
+                        <span className="material-symbols-outlined text-4xl text-primary mb-4">savings</span>
+                        <h3 className="text-xl font-bold mb-2">Retirement Planning</h3>
+                        <p className="text-slate-600 dark:text-slate-400">Plan for a secure retirement with our comprehensive tools.</p>
+                    </Link>
+                    <Link to="/planning/education" className="p-6 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-shadow">
+                        <span className="material-symbols-outlined text-4xl text-primary mb-4">school</span>
+                        <h3 className="text-xl font-bold mb-2">Education Planning</h3>
+                        <p className="text-slate-600 dark:text-slate-400">Save for your children's education with our expert guidance.</p>
+                    </Link>
+                 </div>
+             </main>
+        </div>
+    );
+};
 export const MarketsPage: React.FC = () => { return <InsightsPage />; };
 export const AnalysisPage: React.FC = () => { return <InsightsPage />; };
 export const PolicyPage: React.FC = () => { return <InsightsPage />; };
