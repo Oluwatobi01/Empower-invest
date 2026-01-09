@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeToggle, AuthProvider, useAuth } from './components/Shared';
 import { LandingPage, ServicesPage, ConnectPage, InsightsPage, PlanningPage, MarketsPage, AnalysisPage, PolicyPage, TechPage, PortfoliosPage } from './pages/PublicPages';
 import { RetirementPage, ToolsPage, AccountsPage, ReportsPage, DocumentsPage, ConsultationPage, SettingsPage, InvestmentPortfolioPage } from './pages/AppPages';
