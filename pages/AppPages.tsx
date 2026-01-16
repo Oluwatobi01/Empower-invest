@@ -2,6 +2,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { NavLink, usePersistentState, useAuth } from '../components/Shared';
 import { supabase } from '../lib/supabaseClient';
+import { DepositModal } from '../components/DepositModal';
+import { WithdrawalModal } from '../components/WithdrawalModal';
 
 const DEFAULT_CLIENT_DATA = {
     name: 'Alex Morgan',
@@ -617,6 +619,8 @@ export const AccountsPage: React.FC = () => {
         { id: 1, name: "Chase Checking", balance: 4250.00, type: "Bank", last4: "9921" },
         { id: 2, name: "Citi Savings", balance: 12500.00, type: "Bank", last4: "4582" },
     ]);
+    const [isDepositModalOpen, setDepositModalOpen] = useState(false);
+    const [isWithdrawalModalOpen, setWithdrawalModalOpen] = useState(false);
 
     return (
         <div className="flex h-screen w-full bg-background-light dark:bg-background-dark">
@@ -641,14 +645,25 @@ export const AccountsPage: React.FC = () => {
                              </div>
                          </div>
                      ))}
-                     <button className="p-4 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-xl text-slate-500 font-bold hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                         + Link External Account
-                     </button>
+                     <div className="flex gap-4">
+                         <button className="flex-1 p-4 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-xl text-slate-500 font-bold hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                             + Link External Account
+                         </button>
+                         <button onClick={() => setDepositModalOpen(true)} className="flex-1 p-4 bg-green-500 text-white font-bold rounded-xl hover:bg-green-600 transition-colors">
+                             Deposit
+                         </button>
+                         <button onClick={() => setWithdrawalModalOpen(true)} className="flex-1 p-4 bg-blue-500 text-white font-bold rounded-xl hover:bg-blue-600 transition-colors">
+                             Withdrawal
+                         </button>
+                     </div>
                  </div>
             </main>
+            <DepositModal isOpen={isDepositModalOpen} onClose={() => setDepositModalOpen(false)} />
+            <WithdrawalModal isOpen={isWithdrawalModalOpen} onClose={() => setWithdrawalModalOpen(false)} />
         </div>
     );
 };
+
 
 export const ReportsPage: React.FC = () => {
     return (
