@@ -89,6 +89,7 @@ const Modal: React.FC<{ isOpen: boolean; onClose: () => void; title: string; chi
 
 export const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   // We use the Shared user list
   const [users] = usePersistentState('finserve_users', DEFAULT_USERS);
   // We point to the Demo User's transactions to ensure stats reflect their dashboard
@@ -105,10 +106,13 @@ export const AdminDashboard: React.FC = () => {
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-background-light dark:bg-background-dark">
-      <AdminSidebar />
+      <AdminSidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
       <div className="flex flex-col flex-1 min-w-0">
         <header className="flex items-center justify-between px-6 py-4 bg-white dark:bg-slate-850 border-b border-slate-200 dark:border-slate-800 z-10 sticky top-0">
            <div className="flex items-center gap-4">
+             <button onClick={() => setIsSidebarOpen(true)} className="lg:hidden p-2 text-slate-500 hover:text-slate-800 dark:hover:text-white">
+               <span className="material-symbols-outlined">menu</span>
+             </button>
              <h2 className="hidden md:block text-slate-900 dark:text-white text-xl font-bold leading-tight">Dashboard: {settings.platformName}</h2>
            </div>
            <div className="flex items-center gap-4">
@@ -251,7 +255,7 @@ export const AdminUsersPage: React.FC = () => {
            <button onClick={openCreate} className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-bold shadow-sm hover:bg-blue-600">+ Add User</button>
         </header>
         <div className="p-6 overflow-y-auto">
-             <div className="bg-white dark:bg-slate-850 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+             <div className="bg-white dark:bg-slate-850 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-x-auto">
                 <table className="w-full text-left text-sm">
                     <thead className="bg-slate-50 dark:bg-slate-800/50 text-slate-500 font-bold uppercase text-[11px] tracking-wider">
                         <tr><th className="px-6 py-4">Name</th><th className="px-6 py-4">Email</th><th className="px-6 py-4">Role</th><th className="px-6 py-4">Status</th><th className="px-6 py-4 text-right">Actions</th></tr>
@@ -792,7 +796,7 @@ export const AdminTransactionsPage: React.FC = () => {
            <button onClick={openCreate} className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-bold hover:bg-blue-600">+ New</button>
         </header>
         <div className="p-6 overflow-y-auto">
-             <div className="bg-white dark:bg-slate-850 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+             <div className="bg-white dark:bg-slate-850 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-x-auto">
                 <table className="w-full text-left text-sm">
                     <thead className="bg-slate-50 dark:bg-slate-800/50 text-slate-500 font-bold uppercase text-[11px] tracking-wider">
                         <tr><th className="px-6 py-4">ID</th><th className="px-6 py-4">User</th><th className="px-6 py-4">Amount</th><th className="px-6 py-4">Status</th><th className="px-6 py-4 text-right">Actions</th></tr>
