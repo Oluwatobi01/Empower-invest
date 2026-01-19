@@ -177,41 +177,65 @@ export const NavLink: React.FC<NavLinkProps> = ({ to, label, icon, active }) => 
   );
 };
 
-export const AdminSidebar: React.FC = () => {
+interface AdminSidebarProps {
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
+}
+
+export const AdminSidebar: React.FC<AdminSidebarProps> = ({ isOpen, setIsOpen }) => {
   const location = useLocation();
   const isActive = (path: string) => location.pathname === path;
   const { logout } = useAuth();
 
+  const asideClasses = `
+    flex flex-col w-72 h-full bg-white dark:bg-slate-850
+    border-r border-slate-200 dark:border-slate-800
+    shrink-0 transition-transform duration-300 ease-in-out
+    fixed lg:relative lg:translate-x-0 z-50
+    ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+  `;
+
   return (
-    <aside className="hidden lg:flex flex-col w-72 h-full bg-white dark:bg-slate-850 border-r border-slate-200 dark:border-slate-800 shrink-0 transition-colors">
-      <div className="p-6 pb-2">
-        <div className="flex gap-3 items-center">
-          <div className="bg-primary/10 flex items-center justify-center rounded-lg size-10 text-primary">
-            <span className="material-symbols-outlined">security</span>
-          </div>
-          <div className="flex flex-col">
-            <h1 className="text-slate-900 dark:text-white text-base font-bold leading-normal">Admin Panel</h1>
-            <p className="text-slate-500 dark:text-slate-400 text-sm font-normal">Empower</p>
+    <>
+      <div
+        className={`fixed inset-0 bg-black/50 z-40 lg:hidden ${isOpen ? 'block' : 'hidden'}`}
+        onClick={() => setIsOpen(false)}
+      ></div>
+      <aside className={asideClasses}>
+        <div className="p-6 pb-2">
+          <div className="flex justify-between items-center">
+            <div className="flex gap-3 items-center">
+              <div className="bg-primary/10 flex items-center justify-center rounded-lg size-10 text-primary">
+                <span className="material-symbols-outlined">security</span>
+              </div>
+              <div className="flex flex-col">
+                <h1 className="text-slate-900 dark:text-white text-base font-bold leading-normal">Admin Panel</h1>
+                <p className="text-slate-500 dark:text-slate-400 text-sm font-normal">Empower</p>
+              </div>
+            </div>
+            <button onClick={() => setIsOpen(false)} className="lg:hidden p-2 text-slate-500 hover:text-slate-800 dark:hover:text-white">
+              <span className="material-symbols-outlined">close</span>
+            </button>
           </div>
         </div>
-      </div>
-      <div className="flex-1 overflow-y-auto px-4 py-4">
-        <nav className="flex flex-col gap-2">
-          <NavLink to="/admin" label="Dashboard" icon="dashboard" active={isActive('/admin')} />
-          <NavLink to="/admin/transactions" label="Transactions" icon="receipt_long" active={isActive('/admin/transactions')} />
-          <NavLink to="/admin/users" label="Users" icon="group" active={isActive('/admin/users')} />
-          <NavLink to="/admin/content" label="Content" icon="article" active={isActive('/admin/content')} />
-          <NavLink to="/admin/documents" label="Documents & Reports" icon="folder_shared" active={isActive('/admin/documents')} />
-          <NavLink to="/admin/data" label="Client Data" icon="dataset" active={isActive('/admin/data')} />
-          <NavLink to="/admin/settings" label="Settings" icon="settings" active={isActive('/admin/settings')} />
-        </nav>
-      </div>
-      <div className="p-4 border-t border-slate-200 dark:border-slate-800">
-        <button onClick={logout} className="flex w-full cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-primary hover:bg-blue-600 text-white text-sm font-bold leading-normal tracking-[0.015em] transition-colors shadow-sm">
-          Log Out
-        </button>
-      </div>
-    </aside>
+        <div className="flex-1 overflow-y-auto px-4 py-4">
+          <nav className="flex flex-col gap-2">
+            <NavLink to="/admin" label="Dashboard" icon="dashboard" active={isActive('/admin')} />
+            <NavLink to="/admin/transactions" label="Transactions" icon="receipt_long" active={isActive('/admin/transactions')} />
+            <NavLink to="/admin/users" label="Users" icon="group" active={isActive('/admin/users')} />
+            <NavLink to="/admin/content" label="Content" icon="article" active={isActive('/admin/content')} />
+            <NavLink to="/admin/documents" label="Documents & Reports" icon="folder_shared" active={isActive('/admin/documents')} />
+            <NavLink to="/admin/data" label="Client Data" icon="dataset" active={isActive('/admin/data')} />
+            <NavLink to="/admin/settings" label="Settings" icon="settings" active={isActive('/admin/settings')} />
+          </nav>
+        </div>
+        <div className="p-4 border-t border-slate-200 dark:border-slate-800">
+          <button onClick={logout} className="flex w-full cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-primary hover:bg-blue-600 text-white text-sm font-bold leading-normal tracking-[0.015em] transition-colors shadow-sm">
+            Log Out
+          </button>
+        </div>
+      </aside>
+    </>
   );
 };
 

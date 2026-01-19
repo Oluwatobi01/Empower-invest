@@ -46,7 +46,11 @@ const DEFAULT_HOLDINGS = [
 ];
 
 // --- Shared Components for App Pages ---
-const ClientSidebar: React.FC = () => {
+interface ClientSidebarProps {
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
+}
+const ClientSidebar: React.FC<ClientSidebarProps> = ({ isOpen, setIsOpen }) => {
     // Fetch user name dynamically from the shared client data state
     const { user, logout } = useAuth();
     const dataKey = user ? `finserve_client_data_${user.id}` : 'finserve_client_data_default';
@@ -60,47 +64,67 @@ const ClientSidebar: React.FC = () => {
     
     const safeName = clientData?.name || user?.name || 'User';
     
+    const asideClasses = `
+      w-64 flex-shrink-0 bg-white dark:bg-[#1A2633]
+      border-r border-slate-200 dark:border-slate-700
+      flex flex-col justify-between p-4
+      transition-transform duration-300 ease-in-out
+      fixed md:relative md:translate-x-0 z-50 h-full
+      ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+    `;
+
     return (
-      <aside className="w-64 flex-shrink-0 bg-white dark:bg-[#1A2633] border-r border-slate-200 dark:border-slate-700 flex flex-col justify-between p-4 hidden md:flex">
-        <div className="flex flex-col gap-8">
-          <div className="flex gap-3 items-center px-2">
-            <div className="bg-primary/10 flex items-center justify-center rounded-lg size-10 text-primary">
-              <span className="material-symbols-outlined">account_balance</span>
-            </div>
-            <div className="flex flex-col">
-              <h1 className="text-slate-900 dark:text-white text-base font-bold leading-normal">Empower</h1>
-              <p className="text-slate-500 dark:text-slate-400 text-xs font-normal leading-normal">Secure Banking</p>
-            </div>
-          </div>
-          <nav className="flex flex-col gap-2">
-            <NavLink to="/tools" label="Dashboard" icon="dashboard" />
-            <NavLink to="/investments" label="Investments" icon="stacked_line_chart" />
-            <NavLink to="/retirement" label="Retirement Plan" icon="savings" />
-            <NavLink to="/accounts" label="Accounts" icon="account_balance" />
-            <NavLink to="/reports" label="Reports" icon="bar_chart" />
-            <NavLink to="/documents" label="Documents" icon="folder" />
-          </nav>
-        </div>
-        <div className="flex flex-col gap-2 mt-auto p-4 border-t border-slate-100 dark:border-slate-700 -mx-4">
-           <div className="flex items-center gap-3 px-2 mb-2">
-                <div className="size-8 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
-                    <img src={`https://i.pravatar.cc/150?u=${user?.id || 'def'}`} alt="Profile" />
+      <>
+        <div
+          className={`fixed inset-0 bg-black/50 z-40 md:hidden ${isOpen ? 'block' : 'hidden'}`}
+          onClick={() => setIsOpen(false)}
+        ></div>
+        <aside className={asideClasses}>
+          <div className="flex flex-col gap-8">
+            <div className="flex justify-between items-center px-2">
+              <div className="flex gap-3 items-center">
+                <div className="bg-primary/10 flex items-center justify-center rounded-lg size-10 text-primary">
+                  <span className="material-symbols-outlined">account_balance</span>
                 </div>
                 <div className="flex flex-col">
-                    <span className="text-xs font-bold text-slate-900 dark:text-white line-clamp-1">{safeName}</span>
-                    <span className="text-[10px] text-slate-500">Premium Member</span>
+                  <h1 className="text-slate-900 dark:text-white text-base font-bold leading-normal">Empower</h1>
+                  <p className="text-slate-500 dark:text-slate-400 text-xs font-normal leading-normal">Secure Banking</p>
                 </div>
-           </div>
-          <Link to="/settings" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group">
-            <span className="material-symbols-outlined group-hover:text-primary transition-colors text-[20px]">settings</span>
-            <p className="text-sm font-medium">Settings</p>
-          </Link>
-          <button onClick={logout} className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20 dark:hover:text-red-400 transition-colors group text-left w-full">
-            <span className="material-symbols-outlined text-[20px]">logout</span>
-            <p className="text-sm font-medium">Log Out</p>
-          </button>
-        </div>
-      </aside>
+              </div>
+              <button onClick={() => setIsOpen(false)} className="md:hidden p-2 text-slate-500 hover:text-slate-800 dark:hover:text-white">
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+            <nav className="flex flex-col gap-2">
+              <NavLink to="/tools" label="Dashboard" icon="dashboard" />
+              <NavLink to="/investments" label="Investments" icon="stacked_line_chart" />
+              <NavLink to="/retirement" label="Retirement Plan" icon="savings" />
+              <NavLink to="/accounts" label="Accounts" icon="account_balance" />
+              <NavLink to="/reports" label="Reports" icon="bar_chart" />
+              <NavLink to="/documents" label="Documents" icon="folder" />
+            </nav>
+          </div>
+          <div className="flex flex-col gap-2 mt-auto p-4 border-t border-slate-100 dark:border-slate-700 -mx-4">
+             <div className="flex items-center gap-3 px-2 mb-2">
+                  <div className="size-8 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+                      <img src={`https://i.pravatar.cc/150?u=${user?.id || 'def'}`} alt="Profile" />
+                  </div>
+                  <div className="flex flex-col">
+                      <span className="text-xs font-bold text-slate-900 dark:text-white line-clamp-1">{safeName}</span>
+                      <span className="text-[10px] text-slate-500">Premium Member</span>
+                  </div>
+             </div>
+            <Link to="/settings" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group">
+              <span className="material-symbols-outlined group-hover:text-primary transition-colors text-[20px]">settings</span>
+              <p className="text-sm font-medium">Settings</p>
+            </Link>
+            <button onClick={logout} className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20 dark:hover:text-red-400 transition-colors group text-left w-full">
+              <span className="material-symbols-outlined text-[20px]">logout</span>
+              <p className="text-sm font-medium">Log Out</p>
+            </button>
+          </div>
+        </aside>
+      </>
     );
 };
 
@@ -542,6 +566,7 @@ export const ToolsPage: React.FC = () => {
 
 export const RetirementPage: React.FC = () => {
     const { user } = useAuth();
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     // 1. Get All Relevant Data to build Net Worth for Projection
     const dataKey = user ? `finserve_client_data_${user.id}` : 'finserve_client_data_default';
     const [clientData] = usePersistentState(dataKey, DEFAULT_CLIENT_DATA);
@@ -574,9 +599,14 @@ export const RetirementPage: React.FC = () => {
 
     return (
         <div className="flex h-screen w-full bg-background-light dark:bg-background-dark">
-            <ClientSidebar />
-            <main className="flex-1 p-8 overflow-y-auto">
-                 <h1 className="text-3xl font-black text-slate-900 dark:text-white mb-6">Retirement Planner</h1>
+            <ClientSidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
+            <main className="flex-1 p-4 sm:p-8 overflow-y-auto">
+                <header className="mb-8 flex items-center gap-4">
+                    <button onClick={() => setIsSidebarOpen(true)} className="md:hidden p-2 text-slate-500 hover:text-slate-800 dark:hover:text-white">
+                        <span className="material-symbols-outlined">menu</span>
+                    </button>
+                    <h1 className="text-xl sm:text-3xl font-black text-slate-900 dark:text-white">Retirement Planner</h1>
+                </header>
                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                      <div className="bg-white dark:bg-slate-800 p-8 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
                          <h3 className="text-xl font-bold mb-6 text-slate-900 dark:text-white">Configuration</h3>
@@ -615,6 +645,7 @@ export const RetirementPage: React.FC = () => {
 
 export const AccountsPage: React.FC = () => {
     const { user } = useAuth();
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [accounts] = usePersistentState(`finserve_accounts_${user?.id}`, [
         { id: 1, name: "Chase Checking", balance: 4250.00, type: "Bank", last4: "9921" },
         { id: 2, name: "Citi Savings", balance: 12500.00, type: "Bank", last4: "4582" },
@@ -624,9 +655,14 @@ export const AccountsPage: React.FC = () => {
 
     return (
         <div className="flex h-screen w-full bg-background-light dark:bg-background-dark">
-            <ClientSidebar />
-            <main className="flex-1 p-8 overflow-y-auto">
-                 <h1 className="text-3xl font-black text-slate-900 dark:text-white mb-6">Connected Accounts</h1>
+            <ClientSidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
+            <main className="flex-1 p-4 sm:p-8 overflow-y-auto">
+                <header className="mb-8 flex items-center gap-4">
+                    <button onClick={() => setIsSidebarOpen(true)} className="md:hidden p-2 text-slate-500 hover:text-slate-800 dark:hover:text-white">
+                        <span className="material-symbols-outlined">menu</span>
+                    </button>
+                    <h1 className="text-xl sm:text-3xl font-black text-slate-900 dark:text-white">Connected Accounts</h1>
+                </header>
                  <div className="grid gap-4">
                      {accounts.map((acc: any) => (
                          <div key={acc.id} className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex justify-between items-center">
@@ -666,12 +702,20 @@ export const AccountsPage: React.FC = () => {
 
 
 export const ReportsPage: React.FC = () => {
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     return (
         <div className="flex h-screen w-full bg-background-light dark:bg-background-dark">
-            <ClientSidebar />
-            <main className="flex-1 p-8 overflow-y-auto flex items-center justify-center">
-                 <div className="text-center text-slate-500">
-                     <span className="material-symbols-outlined text-6xl mb-4">bar_chart</span>
+            <ClientSidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
+            <main className="flex-1 p-4 sm:p-8 overflow-y-auto flex flex-col">
+                <header className="mb-8 flex items-center gap-4">
+                    <button onClick={() => setIsSidebarOpen(true)} className="md:hidden p-2 text-slate-500 hover:text-slate-800 dark:hover:text-white">
+                        <span className="material-symbols-outlined">menu</span>
+                    </button>
+                    <h1 className="text-xl sm:text-3xl font-black text-slate-900 dark:text-white">Reports</h1>
+                </header>
+                 <div className="flex-1 flex items-center justify-center text-center text-slate-500">
+                     <div>
+                        <span className="material-symbols-outlined text-6xl mb-4">bar_chart</span>
                      <h2 className="text-2xl font-bold">Financial Reports</h2>
                      <p>Generate PDF reports of your performance in the Documents section.</p>
                  </div>
@@ -682,6 +726,7 @@ export const ReportsPage: React.FC = () => {
 
 export const DocumentsPage: React.FC = () => {
     const { user } = useAuth();
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [docs] = usePersistentState(`finserve_documents_${user?.id}`, [
         { id: 101, category: 'Report', title: "Annual Tax Report", date: "2023", type: "PDF" },
         { id: 102, category: 'Report', title: "Q3 Investment Summary", date: "Oct 2023", type: "PDF" },
@@ -689,10 +734,15 @@ export const DocumentsPage: React.FC = () => {
 
     return (
         <div className="flex h-screen w-full bg-background-light dark:bg-background-dark">
-            <ClientSidebar />
-            <main className="flex-1 p-8 overflow-y-auto">
-                 <h1 className="text-3xl font-black text-slate-900 dark:text-white mb-6">Documents</h1>
-                 <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+            <ClientSidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
+            <main className="flex-1 p-4 sm:p-8 overflow-y-auto">
+                <header className="mb-8 flex items-center gap-4">
+                    <button onClick={() => setIsSidebarOpen(true)} className="md:hidden p-2 text-slate-500 hover:text-slate-800 dark:hover:text-white">
+                        <span className="material-symbols-outlined">menu</span>
+                    </button>
+                    <h1 className="text-xl sm:text-3xl font-black text-slate-900 dark:text-white">Documents</h1>
+                </header>
+                 <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-x-auto">
                      <table className="w-full text-left text-sm">
                          <thead className="bg-slate-50 dark:bg-slate-900/50 text-slate-500 font-bold uppercase text-xs">
                              <tr>
@@ -726,6 +776,7 @@ export const ConsultationPage: React.FC = () => {
     const { user } = useAuth();
     const [bookings, setBookings] = usePersistentState('finserve_bookings', []);
     const [submitted, setSubmitted] = useState(false);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -735,9 +786,14 @@ export const ConsultationPage: React.FC = () => {
 
     return (
         <div className="flex h-screen w-full bg-background-light dark:bg-background-dark">
-            <ClientSidebar />
-            <main className="flex-1 p-8 overflow-y-auto">
-                 <h1 className="text-3xl font-black text-slate-900 dark:text-white mb-6">Book Consultation</h1>
+            <ClientSidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
+            <main className="flex-1 p-4 sm:p-8 overflow-y-auto">
+                <header className="mb-8 flex items-center gap-4">
+                    <button onClick={() => setIsSidebarOpen(true)} className="md:hidden p-2 text-slate-500 hover:text-slate-800 dark:hover:text-white">
+                        <span className="material-symbols-outlined">menu</span>
+                    </button>
+                    <h1 className="text-xl sm:text-3xl font-black text-slate-900 dark:text-white">Book Consultation</h1>
+                </header>
                  {submitted ? (
                      <div className="p-8 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 rounded-xl text-center">
                          <span className="material-symbols-outlined text-4xl mb-2">check_circle</span>
@@ -760,11 +816,17 @@ export const ConsultationPage: React.FC = () => {
 
 export const SettingsPage: React.FC = () => {
     const { user } = useAuth();
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     return (
         <div className="flex h-screen w-full bg-background-light dark:bg-background-dark">
-            <ClientSidebar />
-            <main className="flex-1 p-8 overflow-y-auto">
-                 <h1 className="text-3xl font-black text-slate-900 dark:text-white mb-6">Settings</h1>
+            <ClientSidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
+            <main className="flex-1 p-4 sm:p-8 overflow-y-auto">
+                <header className="mb-8 flex items-center gap-4">
+                    <button onClick={() => setIsSidebarOpen(true)} className="md:hidden p-2 text-slate-500 hover:text-slate-800 dark:hover:text-white">
+                        <span className="material-symbols-outlined">menu</span>
+                    </button>
+                    <h1 className="text-xl sm:text-3xl font-black text-slate-900 dark:text-white">Settings</h1>
+                </header>
                  <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm max-w-2xl">
                      <div className="flex items-center gap-4 mb-8">
                          <div className="size-16 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
@@ -792,6 +854,7 @@ export const SettingsPage: React.FC = () => {
 };
 
 export const InvestmentPortfolioPage: React.FC = () => {
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     // 1. Get Client Data (Wallet Balance)
     const { user } = useAuth();
     const dataKey = user ? `finserve_client_data_${user.id}` : 'finserve_client_data_default';
@@ -861,13 +924,19 @@ export const InvestmentPortfolioPage: React.FC = () => {
 
     return (
         <div className="flex h-screen w-full bg-background-light dark:bg-background-dark">
-            <ClientSidebar />
-            <main className="flex-1 p-8 overflow-y-auto">
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-                    <div>
-                        <h1 className="text-3xl font-black text-slate-900 dark:text-white mb-2">Investment Portfolio</h1>
-                        <p className="text-slate-500 dark:text-slate-400">Detailed performance analysis and risk assessment.</p>
+            <ClientSidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
+            <main className="flex-1 p-4 sm:p-8 overflow-y-auto">
+                <header className="mb-8 flex items-center gap-4">
+                    <button onClick={() => setIsSidebarOpen(true)} className="md:hidden p-2 text-slate-500 hover:text-slate-800 dark:hover:text-white">
+                        <span className="material-symbols-outlined">menu</span>
+                    </button>
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div>
+                            <h1 className="text-xl sm:text-3xl font-black text-slate-900 dark:text-white">Investment Portfolio</h1>
+                            <p className="text-slate-500 dark:text-slate-400">Detailed performance analysis and risk assessment.</p>
+                        </div>
                     </div>
+                </header>
                     <div className="flex items-center gap-2 bg-white dark:bg-slate-800 p-1 rounded-lg border border-slate-200 dark:border-slate-700">
                          <button className="px-3 py-1.5 text-xs font-bold text-slate-500 hover:text-slate-900 dark:hover:text-white">1M</button>
                          <button className="px-3 py-1.5 text-xs font-bold text-slate-500 hover:text-slate-900 dark:hover:text-white">3M</button>
