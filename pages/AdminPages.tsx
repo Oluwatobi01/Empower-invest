@@ -229,8 +229,8 @@ export const AdminUsersPage: React.FC = () => {
       }
   };
 
-  const openEdit = (user: any) => { setCurrentUser(user); setIsModalOpen(true); };
-  const openCreate = () => { setCurrentUser({ name: '', email: '', role: 'User', status: 'Active', plan: 'Basic' }); setIsModalOpen(true); };
+  const openEdit = (user: any) => { setCurrentUser({ ...user, password: '' }); setIsModalOpen(true); };
+  const openCreate = () => { setCurrentUser({ name: '', email: '', password: '', role: 'User', status: 'Active', plan: 'Basic' }); setIsModalOpen(true); };
 
   return (
     <div className="flex h-screen w-full bg-background-light dark:bg-background-dark">
@@ -268,6 +268,7 @@ export const AdminUsersPage: React.FC = () => {
           <form onSubmit={handleSave} className="flex flex-col gap-4">
               <input placeholder="Name" className="p-2 border rounded" value={currentUser?.name} onChange={e => setCurrentUser({...currentUser, name: e.target.value})} />
               <input placeholder="Email" className="p-2 border rounded" value={currentUser?.email} onChange={e => setCurrentUser({...currentUser, email: e.target.value})} />
+              <input placeholder="Password" type="password" className="p-2 border rounded" value={currentUser?.password} onChange={e => setCurrentUser({...currentUser, password: e.target.value})} />
               <button type="submit" className="bg-primary text-white p-2 rounded">Save</button>
           </form>
       </Modal>
@@ -524,16 +525,34 @@ const ClientDataEditor: React.FC<{ userId: string, initialName: string, initialE
         }
     };
 
-    const handleAddFunds = () => {
+    const handleFundAdjustment = (type: 'add' | 'remove') => {
         const amount = parseFloat(fundAmount);
-        if (!isNaN(amount) && amount !== 0) {
-            const newBalance = (clientData.balance || 0) + amount;
-            const newData = { ...clientData, balance: newBalance };
-            setClientData(newData);
-            setFundAmount('');
-            setSaved(true);
-            setTimeout(() => setSaved(false), 2000);
+        if (isNaN(amount) || amount <= 0) {
+            return;
         }
+
+        const adjustmentMultiplier = type === 'add' ? 1 : -1;
+        const newBalance = (clientData.balance || 0) + amount * adjustmentMultiplier;
+
+        // Recalculate budget
+        const newBudget = clientData.budget.map((item: any) => {
+            const adjustment = amount * (item.limit / clientData.balance) * adjustmentMultiplier;
+            return { ...item, limit: item.limit + adjustment };
+        });
+
+        // Recalculate retirement
+        const retirementAdjustment = amount * 0.01 * adjustmentMultiplier;
+        const newRetirement = {
+            ...retirement,
+            rate401k: retirement.rate401k + retirementAdjustment,
+        };
+        setRetirement(newRetirement);
+
+        const newData = { ...clientData, balance: newBalance, budget: newBudget };
+        setClientData(newData);
+        setFundAmount('');
+        setSaved(true);
+        setTimeout(() => setSaved(false), 2000);
     };
 
     const tabs = ['General', 'Accounts', 'Retirement'];
@@ -587,8 +606,11 @@ const ClientDataEditor: React.FC<{ userId: string, initialName: string, initialE
                                             onChange={e => setFundAmount(e.target.value)}
                                         />
                                     </div>
-                                    <button onClick={handleAddFunds} className="px-6 py-2.5 bg-green-500 hover:bg-green-600 text-white font-bold rounded-lg transition-colors whitespace-nowrap shadow-sm shadow-green-500/20 active:scale-95 transform">
+                                    <button onClick={() => handleFundAdjustment('add')} className="px-6 py-2.5 bg-green-500 hover:bg-green-600 text-white font-bold rounded-lg transition-colors whitespace-nowrap shadow-sm shadow-green-500/20 active:scale-95 transform">
                                         Add Funds
+                                    </button>
+                                    <button onClick={() => handleFundAdjustment('remove')} className="px-6 py-2.5 bg-red-500 hover:bg-red-600 text-white font-bold rounded-lg transition-colors whitespace-nowrap shadow-sm shadow-red-500/20 active:scale-95 transform">
+                                        Remove Funds
                                     </button>
                                     </div>
                             </div>
