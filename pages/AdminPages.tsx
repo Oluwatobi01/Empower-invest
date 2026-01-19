@@ -214,9 +214,19 @@ export const AdminUsersPage: React.FC = () => {
         setUsers(users.map((u: any) => u.id === currentUser.id ? currentUser : u));
         await supabase.from('users').update(currentUser).eq('id', currentUser.id);
     } else {
-        const newUser = { ...currentUser, id: Date.now() };
-        setUsers([...users, newUser]);
-        await supabase.from('users').insert(newUser);
+        // Omit the password from the user data before inserting it into the database.
+        const { password, ...userToInsert } = currentUser;
+        const { data, error } = await supabase
+            .from('users')
+            .insert(userToInsert)
+            .select(); // Use .select() to get the new record back.
+
+        if (error) {
+            console.error("Error creating user:", error);
+        } else if (data) {
+            // Add the new user to the local state.
+            setUsers([...users, data[0]]);
+        }
     }
     setIsModalOpen(false);
   };
